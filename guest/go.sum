@@ -1,0 +1,4 @@
+github.com/rizzza/smart v0.0.0-20190505152634-909a45200d6d h1:bmDZI9GqCBxJdnEeu+SQE3G7rVN0ip3WbDlXEgqFdVk=
+github.com/rizzza/smart v0.0.0-20190505152634-909a45200d6d/go.mod h1:6SQBWT095uvGKyNviEP1flAgRqAIlgTTMtLZXqGsz/M=
+golang.org/x/sys v0.3.0 h1:w8ZOecv6NaNa/zC8944JTU3vz4u6Lagfk4RPQxv92NQ=
+golang.org/x/sys v0.3.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
