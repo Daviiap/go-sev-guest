@@ -29,14 +29,18 @@ func getSNPDevFD() (uintptr, error) {
 }
 
 func SNPIOCtl(guestReq *SnpGuestRequestIOCtl) error {
-	fd, err := getSNPDevFD()
+	const SNP_GUEST_REQ_IOC_TYPE = 'S'
+	var SNP_GET_REPORT = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(SnpGuestRequestIOCtl{}))
+
+	file, err := os.Open("/dev/sev-guest")
 
 	if err != nil {
 		return err
 	}
 
-	const SNP_GUEST_REQ_IOC_TYPE = 'S'
-	var SNP_GET_REPORT = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(SnpGuestRequestIOCtl{}))
+	defer file.Close()
+
+	fd := file.Fd()
 
 	return ioctl.Ioctl(fd, SNP_GET_REPORT, uintptr(unsafe.Pointer(guestReq)))
 }
