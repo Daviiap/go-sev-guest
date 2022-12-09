@@ -20,7 +20,10 @@ func main() {
 		switch args[0] {
 		case "--get_report":
 			report := commands.AttestationReport{}
-			commands.GetReport([64]byte{}, &report)
+			_, err := commands.GetReport([64]byte{}, &report)
+			if err != nil {
+				fmt.Println(err)
+			}
 			commands.PrintAttestationReport(&report)
 		default:
 			printUsage()
