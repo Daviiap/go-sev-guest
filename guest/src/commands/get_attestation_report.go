@@ -1,30 +1,22 @@
-package main
+package commands
 
 import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"os"
 	"unsafe"
 
-	"github.com/rizzza/smart/ioctl"
+	snp "sev-guest/src/snp"
 )
 
-type SnpReportReq struct {
+type snpReportReq struct {
 	UserData [64]byte
 	VMPL     uint32
 	Reserved [28]byte
 }
 
-type SnpReportResp struct {
+type snpReportResp struct {
 	Data [4000]byte
-}
-
-type SnpGuestRequestIOCtl struct {
-	MSGVersion byte
-	ReqData    uint64
-	RespData   uint64
-	FWErr      uint64
 }
 
 type TCBVersion struct {
@@ -35,7 +27,7 @@ type TCBVersion struct {
 	Microcode  byte
 }
 
-type Signature struct {
+type signature struct {
 	R        [72]byte
 	S        [72]byte
 	Reserved [512 - 144]byte
@@ -74,7 +66,7 @@ type AttestationReport struct {
 	Reserved3       byte
 	LaunchTCB       TCBVersion
 	Reserved4       [168]byte
-	Signature       Signature
+	Signature       signature
 }
 
 type MsgReportResp struct {
@@ -85,9 +77,9 @@ type MsgReportResp struct {
 }
 
 func GetReport(data [64]byte, report *AttestationReport) ([]byte, error) {
-	var req SnpReportReq
-	var resp SnpReportResp
-	var guestReq SnpGuestRequestIOCtl
+	var req snpReportReq
+	var resp snpReportResp
+	var guestReq snp.SnpGuestRequestIOCtl
 	var reportResp MsgReportResp
 
 	req.UserData = data
@@ -96,20 +88,7 @@ func GetReport(data [64]byte, report *AttestationReport) ([]byte, error) {
 	guestReq.ReqData = uint64(uintptr(unsafe.Pointer(&req)))
 	guestReq.RespData = uint64(uintptr(unsafe.Pointer(&resp)))
 
-	file, err := os.Open("/dev/sev-guest")
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer file.Close()
-
-	fd := file.Fd()
-
-	const SNP_GUEST_REQ_IOC_TYPE = 'S'
-	var SNP_GET_REPORT = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(SnpGuestRequestIOCtl{}))
-
-	err = ioctl.Ioctl(fd, SNP_GET_REPORT, uintptr(unsafe.Pointer(&guestReq)))
+	err := snp.SNPIOCtl(&guestReq)
 
 	if err != nil {
 		return nil, err
