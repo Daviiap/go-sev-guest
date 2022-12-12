@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"unsafe"
+	"errors"
+	"os"
 
 	snp "sev-guest/src/snp"
 )
@@ -120,6 +122,19 @@ func PrintByteArray(array []byte) string {
 	}
 
 	return str
+}
+
+func WriteAttestationReport(report *[]byte, fileName string) error {
+	reportSize := int(unsafe.Sizeof(AttestationReport{}))
+	if len(*report) != reportSize {
+		return fmt.Errorf("error: received report size: %d, expected %d", len(*report), reportSize)
+	}
+
+	if fileName == "" {
+		return errors.New("error: must provide a valid filename (size > 0)")
+	}
+
+	return os.WriteFile(fileName, *report, 0x04)
 }
 
 func PrintAttestationReport(report *AttestationReport) {

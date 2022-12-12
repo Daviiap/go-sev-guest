@@ -20,11 +20,17 @@ func main() {
 		switch args[0] {
 		case "--get_report":
 			report := commands.AttestationReport{}
-			_, err := commands.GetReport([64]byte{}, &report)
+			bin, err := commands.GetReport([64]byte{}, &report)
+
 			if err != nil {
 				fmt.Println(err)
 			}
-			commands.PrintAttestationReport(&report)
+
+			if args[1] == "write" {
+				commands.WriteAttestationReport(&bin, "report.bin")
+			} else if args[1] == "read" {
+				commands.PrintAttestationReport(&report)
+			}
 		default:
 			printUsage()
 		}
