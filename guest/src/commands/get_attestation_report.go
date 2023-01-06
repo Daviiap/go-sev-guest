@@ -3,10 +3,10 @@ package commands
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
-	"unsafe"
 	"errors"
+	"fmt"
 	"os"
+	"unsafe"
 
 	snp "sev-guest/src/snp"
 )
@@ -78,7 +78,7 @@ type MsgReportResp struct {
 	AttestationReport AttestationReport
 }
 
-func GetReport(data [64]byte, report *AttestationReport) ([]byte, error) {
+func GetReport(data [64]byte) ([]byte, error) {
 	var req snpReportReq
 	var resp snpReportResp
 	var guestReq snp.SnpGuestRequestIOCtl
@@ -99,18 +99,29 @@ func GetReport(data [64]byte, report *AttestationReport) ([]byte, error) {
 	reportBin := resp.Data[32 : 1184+32]
 
 	binary.Read(bytes.NewBuffer(resp.Data[:]), binary.LittleEndian, &reportResp)
-	binary.Read(bytes.NewBuffer(reportBin), binary.LittleEndian, report)
 
 	if reportResp.Status != 0 {
 		return nil, fmt.Errorf("error: status: %d", reportResp.Status)
 	}
 
-	reportSize := unsafe.Sizeof(*report)
-	if reportResp.ReportSize > uint32(reportSize) {
+	reportSize := unsafe.Sizeof(AttestationReport{})
+	if reportResp.ReportSize != uint32(reportSize) {
 		return nil, fmt.Errorf("error: received report size: %d, expected %d", reportResp.ReportSize, reportSize)
 	}
 
 	return reportBin, nil
+}
+
+func ReadReport(reportPath string, report *AttestationReport) error {
+	reportBin, err := os.ReadFile(reportPath)
+
+	if err != nil {
+		return err
+	}
+
+	binary.Read(bytes.NewBuffer(reportBin), binary.LittleEndian, report)
+
+	return nil
 }
 
 func PrintByteArray(array []byte) string {

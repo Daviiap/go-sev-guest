@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sev-guest/src/commands"
 )
@@ -15,14 +16,24 @@ func printUsage() {
 }
 
 func getReport(options getReportOptions) {
-	report := commands.AttestationReport{}
-	reportBin, err := commands.GetReport([64]byte{}, &report)
+	reportBin, err := commands.GetReport([64]byte{})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	commands.WriteAttestationReport(&reportBin, options.Filename)
+}
+
+func readReport(options readReportOptions) {
+	report := commands.AttestationReport{}
+	err := commands.ReadReport(options.Filename, &report)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	commands.PrintAttestationReport(&report)
 }
 
 type getReportOptions struct {
@@ -60,6 +71,14 @@ func parseOptions(cmdOpts *commandsOpts) {
 			if isValidIndex(i+1, len(args)) {
 				cmdOpts.GetReportOptions.Filename = args[i+1]
 			}
+		case "--read_report":
+			cmdOpts.ReadReport = true
+
+			if isValidIndex(i+1, len(args)) {
+				cmdOpts.ReadReportOptions.Filename = args[i+1]
+			} else {
+				log.Fatal("Invalid argument")
+			}
 		case "--help":
 			cmdOpts.PrintUsage = true
 		}
@@ -76,5 +95,7 @@ func main() {
 		printUsage()
 	} else if cmds.GetReport {
 		getReport(cmds.GetReportOptions)
+	} else if cmds.ReadReport {
+		readReport(cmds.ReadReportOptions)
 	}
 }
