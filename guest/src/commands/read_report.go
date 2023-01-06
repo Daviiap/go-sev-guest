@@ -9,11 +9,13 @@ import (
 	"sev-guest/src/snp"
 )
 
-const POLICY_ABI_MAJOR_MASK = 8
-const POLICY_SMT_MASK = 16
-const POLICY_MIGRATE_MA_MASK = 18
-const POLICY_DEBUG_MASK = 19
-const POLICY_SINGLE_SOCKET_MASK = 20
+const POLICY_ABI_MINOR_MASK = 0xff
+const POLICY_ABI_MAJOR_MASK = 0xff00
+const POLICY_ABI_MAJOR_SHIFT = 0x8
+const POLICY_SMT_MASK = 0x10000
+const POLICY_MIGRATE_MA_MASK = 0x40000
+const POLICY_DEBUG_MASK = 0x80000
+const POLICY_SINGLE_SOCKET_MASK = 0x100000
 
 func ReadReport(reportPath string, report *snp.AttestationReport) error {
 	reportBin, err := os.ReadFile(reportPath)
@@ -46,17 +48,17 @@ func PrintAttestationReport(report *snp.AttestationReport) {
 	fmt.Print("Policy: ")
 	fmt.Printf("0x%x\n", report.Policy)
 	fmt.Print("    ABIMinor: ")
-	fmt.Println(report.Policy & 0b11111111)
+	fmt.Println(report.Policy & POLICY_ABI_MINOR_MASK)
 	fmt.Print("    ABIMajor: ")
-	fmt.Println((report.Policy >> POLICY_ABI_MAJOR_MASK) & 0b11111111)
+	fmt.Println((report.Policy & POLICY_ABI_MAJOR_MASK) >> POLICY_ABI_MAJOR_SHIFT)
 	fmt.Print("    SMT: ")
-	fmt.Println((report.Policy >> POLICY_SMT_MASK) & 0x1)
+	fmt.Println((report.Policy & POLICY_SMT_MASK) != 0)
 	fmt.Print("    MigrateMA: ")
-	fmt.Println((report.Policy >> POLICY_MIGRATE_MA_MASK) & 0x1)
+	fmt.Println((report.Policy & POLICY_MIGRATE_MA_MASK) != 0)
 	fmt.Print("    Debug: ")
-	fmt.Println((report.Policy >> POLICY_DEBUG_MASK) & 0x1)
+	fmt.Println((report.Policy & POLICY_DEBUG_MASK) != 0)
 	fmt.Print("    SingleSocket: ")
-	fmt.Println((report.Policy >> POLICY_SINGLE_SOCKET_MASK) & 0x1)
+	fmt.Println((report.Policy & POLICY_SINGLE_SOCKET_MASK) != 0)
 	fmt.Print("FamilyId: ")
 	fmt.Println(PrintByteArray(report.FamilyId[:]))
 	fmt.Print("ImageId: ")
