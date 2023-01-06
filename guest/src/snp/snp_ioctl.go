@@ -14,10 +14,9 @@ type SnpGuestRequestIOCtl struct {
 	FWErr      uint64
 }
 
-func SNPIOCtl(guestReq *SnpGuestRequestIOCtl) error {
-	const SNP_GUEST_REQ_IOC_TYPE = 'S'
-	var SNP_GET_REPORT = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(SnpGuestRequestIOCtl{}))
+const SNP_GUEST_REQ_IOC_TYPE = 'S'
 
+func SNPIOCtl(guestReq *SnpGuestRequestIOCtl, cmd uintptr) error {
 	file, err := os.Open("/dev/sev-guest")
 
 	if err != nil {
@@ -28,5 +27,5 @@ func SNPIOCtl(guestReq *SnpGuestRequestIOCtl) error {
 
 	fd := file.Fd()
 
-	return ioctl.Ioctl(fd, SNP_GET_REPORT, uintptr(unsafe.Pointer(guestReq)))
+	return ioctl.Ioctl(fd, cmd, uintptr(unsafe.Pointer(guestReq)))
 }

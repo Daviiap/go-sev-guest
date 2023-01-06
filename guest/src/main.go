@@ -12,45 +12,18 @@ func printUsage() {
 	fmt.Println("commands:")
 	fmt.Println("  --get_report")
 	fmt.Println("    Input params:")
-	fmt.Println("      filename - name of the report binary file")
-}
-
-func getReport(options getReportOptions) {
-	reportBin, err := commands.GetReport([64]byte{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	commands.WriteAttestationReport(&reportBin, options.Filename)
-}
-
-func readReport(options readReportOptions) {
-	report := commands.AttestationReport{}
-	err := commands.ReadReport(options.Filename, &report)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	commands.PrintAttestationReport(&report)
-}
-
-type getReportOptions struct {
-	Filename     string
-	DataFileName string
-}
-
-type readReportOptions struct {
-	Filename string
+	fmt.Println("      filename - name of the report binary file to write")
+	fmt.Println("  --read_report")
+	fmt.Println("    Input params:")
+	fmt.Println("      filename - name of the report binary file to read")
 }
 
 type commandsOpts struct {
 	PrintUsage        bool
 	GetReport         bool
-	GetReportOptions  getReportOptions
+	GetReportOptions  commands.GetReportOptions
 	ReadReport        bool
-	ReadReportOptions readReportOptions
+	ReadReportOptions commands.ReadReportOptions
 }
 
 func isValidIndex(index int, length int) bool {
@@ -94,8 +67,8 @@ func main() {
 	if cmds.PrintUsage {
 		printUsage()
 	} else if cmds.GetReport {
-		getReport(cmds.GetReportOptions)
+		commands.GetReportCommand(cmds.GetReportOptions)
 	} else if cmds.ReadReport {
-		readReport(cmds.ReadReportOptions)
+		commands.ReadReportCommand(cmds.ReadReportOptions)
 	}
 }
