@@ -6,13 +6,13 @@ import (
 	"github.com/rizzza/smart/ioctl"
 )
 
-type SnpReportReq struct {
+type ReportReq struct {
 	UserData [64]byte
 	VMPL     uint32
 	Reserved [28]byte
 }
 
-type SnpReportResp struct {
+type ReportResp struct {
 	Data [4000]byte
 }
 
@@ -73,4 +73,4 @@ type MsgReportResp struct {
 	AttestationReport AttestationReport
 }
 
-var SNP_GET_REPORT_CMD = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(SnpGuestRequestIOCtl{}))
+var SNP_GET_REPORT_CMD = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(GuestRequestIOCtl{}))

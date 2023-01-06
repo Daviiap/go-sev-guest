@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bytes"
+	"crypto/sha512"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -13,9 +14,9 @@ import (
 )
 
 func GetReport(data [64]byte) ([]byte, error) {
-	var req snp.SnpReportReq
-	var resp snp.SnpReportResp
-	var guestReq snp.SnpGuestRequestIOCtl
+	var req snp.ReportReq
+	var resp snp.ReportResp
+	var guestReq snp.GuestRequestIOCtl
 	var reportResp snp.MsgReportResp
 
 	req.UserData = data
@@ -65,7 +66,15 @@ type GetReportOptions struct {
 }
 
 func GetReportCommand(options GetReportOptions) {
-	reportBin, err := GetReport([64]byte{})
+	fileData, _ := os.ReadFile(options.DataFileName)
+
+	data := [64]byte{}
+
+	if len(fileData) > 0 {
+		data = sha512.Sum512(fileData)
+	}
+
+	reportBin, err := GetReport(data)
 
 	if err != nil {
 		log.Fatal(err)

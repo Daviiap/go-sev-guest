@@ -7,7 +7,7 @@ import (
 	"github.com/rizzza/smart/ioctl"
 )
 
-type SnpGuestRequestIOCtl struct {
+type GuestRequestIOCtl struct {
 	MSGVersion byte
 	ReqData    uint64
 	RespData   uint64
@@ -16,7 +16,7 @@ type SnpGuestRequestIOCtl struct {
 
 const SNP_GUEST_REQ_IOC_TYPE = 'S'
 
-func SNPIOCtl(guestReq *SnpGuestRequestIOCtl, cmd uintptr) error {
+func SNPIOCtl(guestReq *GuestRequestIOCtl, cmd uintptr) error {
 	file, err := os.Open("/dev/sev-guest")
 
 	if err != nil {

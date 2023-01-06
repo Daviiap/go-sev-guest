@@ -12,7 +12,7 @@ func printUsage() {
 	fmt.Println("commands:")
 	fmt.Println("  --get_report")
 	fmt.Println("    Input params:")
-	fmt.Println("      filename - name of the report binary file to write")
+	fmt.Println("      data file name - name of the file containing the data to be included into the report")
 	fmt.Println("  --read_report")
 	fmt.Println("    Input params:")
 	fmt.Println("      filename - name of the report binary file to read")
@@ -42,7 +42,7 @@ func parseOptions(cmdOpts *commandsOpts) {
 			cmdOpts.GetReportOptions.Filename = "report.bin"
 
 			if isValidIndex(i+1, len(args)) {
-				cmdOpts.GetReportOptions.Filename = args[i+1]
+				cmdOpts.GetReportOptions.DataFileName = args[i+1]
 			}
 		case "--read_report":
 			cmdOpts.ReadReport = true
