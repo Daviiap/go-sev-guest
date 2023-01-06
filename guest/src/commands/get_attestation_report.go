@@ -78,6 +78,12 @@ type MsgReportResp struct {
 	AttestationReport AttestationReport
 }
 
+const POLICY_ABI_MAJOR_MASK = 8
+const POLICY_SMT_MASK = 16
+const POLICY_MIGRATE_MA_MASK = 18
+const POLICY_DEBUG_MASK = 19
+const POLICY_SINGLE_SOCKET_MASK = 20
+
 func GetReport(data [64]byte) ([]byte, error) {
 	var req snpReportReq
 	var resp snpReportResp
@@ -155,6 +161,18 @@ func PrintAttestationReport(report *AttestationReport) {
 	fmt.Println(report.GuestSVN)
 	fmt.Print("Policy: ")
 	fmt.Printf("0x%x\n", report.Policy)
+	fmt.Print("    ABIMinor: ")
+	fmt.Println(report.Policy & 0b11111111)
+	fmt.Print("    ABIMajor: ")
+	fmt.Println((report.Policy >> POLICY_ABI_MAJOR_MASK) & 0b11111111)
+	fmt.Print("    SMT: ")
+	fmt.Println((report.Policy >> POLICY_SMT_MASK) & 0x1)
+	fmt.Print("    MigrateMA: ")
+	fmt.Println((report.Policy >> POLICY_MIGRATE_MA_MASK) & 0x1)
+	fmt.Print("    Debug: ")
+	fmt.Println((report.Policy >> POLICY_DEBUG_MASK) & 0x1)
+	fmt.Print("    SingleSocket: ")
+	fmt.Println((report.Policy >> POLICY_SINGLE_SOCKET_MASK) & 0x1)
 	fmt.Print("FamilyId: ")
 	fmt.Println(PrintByteArray(report.FamilyId[:]))
 	fmt.Print("ImageId: ")
