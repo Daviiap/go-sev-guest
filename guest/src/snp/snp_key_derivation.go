@@ -7,7 +7,7 @@ import (
 )
 
 type DeriveKeyReq struct {
-	Selection        uint32
+	KeysSelections   uint32
 	Reserved         uint32
 	GuestFieldSelect uint64
 	VMPL             uint32
