@@ -16,14 +16,6 @@ type ReportResp struct {
 	Data [4000]byte
 }
 
-type TCBVersion struct {
-	BootLoader byte
-	TEE        byte
-	Reserved   [4]byte
-	SNP        byte
-	Microcode  byte
-}
-
 type Signature struct {
 	R        [72]byte
 	S        [72]byte
