@@ -65,4 +65,11 @@ type MsgReportResp struct {
 	AttestationReport AttestationReport
 }
 
+struct ExtReportReq {
+	Data 		 ReportReq;
+	CertsAddress uint64
+	CertsLen 	 uint32
+}
+
 var SNP_GET_REPORT_CMD = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x0, unsafe.Sizeof(GuestRequestIOCtl{}))
+var SNP_GET_EXT_REPORT_CMD = ioctl.Iowr(uintptr(SNP_GUEST_REQ_IOC_TYPE), 0x2, unsafe.Sizeof(GuestRequestIOCtl{}))
