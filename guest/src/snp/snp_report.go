@@ -65,7 +65,7 @@ type MsgReportResp struct {
 	AttestationReport AttestationReport
 }
 
-struct ExtReportReq {
+type ExtReportReq struct {
 	Data 		 ReportReq
 	CertsAddress uint64
 	CertsLen 	 uint32
